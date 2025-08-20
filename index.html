@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Verificación de Transporte - Demo Interactiva</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -12,10 +14,35 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
+            overflow-x: hidden;
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
         }
 
         .header {
@@ -117,46 +144,135 @@
         }
 
         .map-container {
-            height: 300px;
-            background: #2c3e50;
+            height: 400px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             border-radius: 15px;
             position: relative;
             overflow: hidden;
             margin: 20px 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
         }
 
         .vehicle {
-            width: 30px;
-            height: 30px;
-            background: #e74c3c;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 20px;
             transform: translateY(-50%);
-            transition: all 2s ease;
+            transition: all 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-weight: bold;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.5);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .vehicle::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 2px solid rgba(231, 76, 60, 0.3);
+            border-radius: 50%;
+            animation: radar 2s linear infinite;
+        }
+
+        @keyframes radar {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .vehicle-trail {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(231, 76, 60, 0.6);
+            border-radius: 50%;
+            transition: all 0.5s ease;
         }
 
         .zone {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             border: 3px dashed #f39c12;
-            border-radius: 15px;
+            border-radius: 20px;
             position: absolute;
             top: 50%;
-            right: 50px;
+            right: 60px;
             transform: translateY(-50%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: #f39c12;
             font-weight: bold;
-            background: rgba(243, 156, 18, 0.1);
+            background: radial-gradient(circle, rgba(243, 156, 18, 0.1) 0%, transparent 70%);
+            animation: pulse-zone 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse-zone {
+            0%, 100% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.05); }
+        }
+
+        .gps-coords {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #0ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+        .satellite-view {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 80px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f0;
+            font-size: 10px;
+            flex-direction: column;
+        }
+
+        .satellite-signal {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0f0 0%, #ff0 50%, #f00 100%);
+            border-radius: 2px;
+            margin-top: 4px;
         }
 
         .controls {
@@ -301,9 +417,249 @@
             color: #7f8c8d;
             margin-top: 5px;
         }
+
+        .notifications {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 350px;
+        }
+
+        .notification {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3498db;
+            transform: translateX(400px);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .notification.success {
+            border-left-color: #27ae60;
+        }
+
+        .notification.warning {
+            border-left-color: #f39c12;
+        }
+
+        .notification.error {
+            border-left-color: #e74c3c;
+        }
+
+        @keyframes slideIn {
+            to { transform: translateX(0); }
+        }
+
+        .notification h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .notification p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .notification .time {
+            font-size: 10px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            height: 200px;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .chart-bar {
+            position: absolute;
+            bottom: 20px;
+            width: 25px;
+            background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+        }
+
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .audio-btn {
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .audio-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        .export-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .export-btn {
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .config-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .config-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 25px;
+            background: #ccc;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #3498db;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(25px);
+        }
+
+        .history-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 10px;
+        }
+
+        .history-status {
+            font-weight: bold;
+        }
+
+        .history-status.success {
+            color: #27ae60;
+        }
+
+        .history-status.error {
+            color: #e74c3c;
+        }
+
+        .tab-buttons {
+            display: flex;
+            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
     </style>
 </head>
 <body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="notifications" id="notifications"></div>
+    
+    <div class="audio-controls">
+        <button class="audio-btn" onclick="toggleSound()" title="Toggle Sound">🔊</button>
+        <button class="audio-btn" onclick="toggleMusic()" title="Background Music">🎵</button>
+    </div>
+
     <div class="header">
         <h1>🚛 Sistema de Verificación de Transporte</h1>
         <p>Demostración Interactiva - Tecnología de Vanguardia</p>
@@ -374,8 +730,101 @@
             <h2>🎛️ Panel de Control</h2>
 
             <div class="map-container">
+                <div class="map-grid"></div>
+                <div class="gps-coords" id="gpsCoords">
+                    GPS: 19.4326° N, 99.1332° W
+                </div>
+                <div class="satellite-view">
+                    <div>GPS SAT</div>
+                    <div class="satellite-signal"></div>
+                </div>
                 <div class="vehicle" id="vehicle">🚛</div>
                 <div class="zone">ZONA<br>SEGURA</div>
+            </div>
+
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+                <button class="tab-btn" onclick="showTab('config')">⚙️ Config</button>
+                <button class="tab-btn" onclick="showTab('history')">📋 Historial</button>
+                <button class="tab-btn" onclick="showTab('reports')">📈 Reportes</button>
+            </div>
+
+            <div id="dashboardTab">
+                <div class="chart-container">
+                    <div class="chart-title">📈 Verificaciones por Hora</div>
+                    <div class="chart-bar" style="left: 30px; height: 60px;"></div>
+                    <div class="chart-bar" style="left: 60px; height: 80px;"></div>
+                    <div class="chart-bar" style="left: 90px; height: 120px;"></div>
+                    <div class="chart-bar" style="left: 120px; height: 90px;"></div>
+                    <div class="chart-bar" style="left: 150px; height: 140px;"></div>
+                    <div class="chart-bar" style="left: 180px; height: 110px;"></div>
+                    <div class="chart-bar" style="left: 210px; height: 160px;"></div>
+                </div>
+            </div>
+
+            <div class="config-panel" id="configTab">
+                <h3>⚙️ Configuración del Sistema</h3>
+                <div class="config-item">
+                    <span>Alertas de Sonido</span>
+                    <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
+                </div>
+                <div class="config-item">
+                    <span>Verificación Automática</span>
+                    <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
+                </div>
+                <div class="config-item">
+                    <span>Notificaciones Push</span>
+                    <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
+                </div>
+                <div class="config-item">
+                    <span>Modo Tiempo Real</span>
+                    <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
+                </div>
+                <div class="config-item">
+                    <span>GPS de Alta Precisión</span>
+                    <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
+                </div>
+            </div>
+
+            <div class="history-panel" id="historyTab">
+                <h3>📋 Historial de Verificaciones</h3>
+                <div class="history-item">
+                    <div>
+                        <strong>Vehículo TRA-001</strong><br>
+                        <small>2024-01-15 14:30:22</small>
+                    </div>
+                    <div class="history-status success">✅ VERIFICADO</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <strong>Vehículo TRA-002</strong><br>
+                        <small>2024-01-15 13:45:18</small>
+                    </div>
+                    <div class="history-status success">✅ VERIFICADO</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <strong>Vehículo TRA-003</strong><br>
+                        <small>2024-01-15 12:22:10</small>
+                    </div>
+                    <div class="history-status error">⚠️ FALLO</div>
+                </div>
+                <div class="history-item">
+                    <div>
+                        <strong>Vehículo TRA-004</strong><br>
+                        <small>2024-01-15 11:15:33</small>
+                    </div>
+                    <div class="history-status success">✅ VERIFICADO</div>
+                </div>
+            </div>
+
+            <div class="export-panel" id="reportsTab" style="display: none;">
+                <h3>📈 Exportar Reportes</h3>
+                <p>Generar reportes profesionales para análisis ejecutivo</p>
+                <button class="export-btn" onclick="exportReport('pdf')">📄 PDF Ejecutivo</button>
+                <button class="export-btn" onclick="exportReport('excel')">📊 Excel Detallado</button>
+                <button class="export-btn" onclick="exportReport('csv')">📋 CSV Raw Data</button>
+                <button class="export-btn" onclick="exportReport('json')">🔧 JSON API</button>
             </div>
 
             <div class="controls">
@@ -436,7 +885,130 @@
     <script>
         let currentStep = 0;
         let isRunning = false;
+        let soundEnabled = true;
+        let musicEnabled = false;
+        let vehicleTrail = [];
+        let currentTab = 'dashboard';
 
+        // Inicializar partículas de fondo
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Sistema de notificaciones
+        function showNotification(title, message, type = 'info') {
+            const container = document.getElementById('notifications');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            notification.innerHTML = `
+                <h4>${title}</h4>
+                <p>${message}</p>
+                <div class="time">${time}</div>
+            `;
+            
+            container.appendChild(notification);
+            
+            if (soundEnabled) {
+                playNotificationSound(type);
+            }
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        }
+
+        // Audio effects
+        function playNotificationSound(type) {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(type === 'error' ? 300 : 600, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.3);
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            showNotification('Audio', `Sonido ${soundEnabled ? 'activado' : 'desactivado'}`, 'info');
+        }
+
+        function toggleMusic() {
+            musicEnabled = !musicEnabled;
+            showNotification('Música', `Música de fondo ${musicEnabled ? 'activada' : 'desactivada'}`, 'info');
+        }
+
+        // GPS coordinates simulation
+        function updateGPSCoords() {
+            const baseLat = 19.4326;
+            const baseLng = -99.1332;
+            const newLat = baseLat + (Math.random() - 0.5) * 0.01;
+            const newLng = baseLng + (Math.random() - 0.5) * 0.01;
+            
+            document.getElementById('gpsCoords').textContent = 
+                `GPS: ${newLat.toFixed(4)}° N, ${Math.abs(newLng).toFixed(4)}° W`;
+        }
+
+        // Tab navigation
+        function showTab(tabName) {
+            // Hide all tabs
+            document.getElementById('dashboardTab').style.display = tabName === 'dashboard' ? 'block' : 'none';
+            document.getElementById('configTab').style.display = tabName === 'config' ? 'block' : 'none';
+            document.getElementById('historyTab').style.display = tabName === 'history' ? 'block' : 'none';
+            document.getElementById('reportsTab').style.display = tabName === 'reports' ? 'block' : 'none';
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+        }
+
+        // Configuration toggles
+        function toggleConfig(element) {
+            element.classList.toggle('active');
+            const setting = element.parentElement.querySelector('span').textContent;
+            const status = element.classList.contains('active') ? 'activado' : 'desactivado';
+            showNotification('Configuración', `${setting} ${status}`, 'success');
+        }
+
+        // Export reports
+        function exportReport(format) {
+            const reports = {
+                pdf: 'Reporte Ejecutivo PDF generado',
+                excel: 'Datos Excel exportados exitosamente',
+                csv: 'Archivo CSV descargado',
+                json: 'API JSON data exportada'
+            };
+            
+            showNotification('Exportar', reports[format], 'success');
+            
+            // Simulate download
+            const link = document.createElement('a');
+            link.download = `transport-verification-report.${format}`;
+            link.href = 'data:text/plain;charset=utf-8,Sample report data';
+            link.click();
+        }
+
+        // Enhanced simulation functions
         function updateProgress(step) {
             const progress = (step / 6) * 100;
             document.getElementById('progressBar').style.width = progress + '%';
@@ -459,9 +1031,26 @@
             return Math.floor(1000 + Math.random() * 9000);
         }
 
+        function createVehicleTrail() {
+            const vehicle = document.getElementById('vehicle');
+            const rect = vehicle.getBoundingClientRect();
+            const mapRect = vehicle.parentElement.getBoundingClientRect();
+            
+            const trail = document.createElement('div');
+            trail.className = 'vehicle-trail';
+            trail.style.left = (rect.left - mapRect.left + 20) + 'px';
+            trail.style.top = (rect.top - mapRect.top + 20) + 'px';
+            
+            vehicle.parentElement.appendChild(trail);
+            
+            setTimeout(() => trail.remove(), 2000);
+        }
+
         async function startSimulation() {
             if (isRunning) return;
             isRunning = true;
+            
+            showNotification('Sistema', 'Iniciando verificación de transporte', 'info');
             
             resetAllSteps();
             document.getElementById('alertBox').style.display = 'none';
@@ -470,16 +1059,20 @@
             setStepStatus(1, 'active');
             updateVehicleStatus('Rastreando...');
             updateProgress(1);
+            updateGPSCoords();
             await sleep(1500);
             setStepStatus(1, 'success');
+            showNotification('GPS', 'Ubicación obtenida exitosamente', 'success');
 
             // Paso 2: Mover vehículo y evaluar zona
             setStepStatus(2, 'active');
             document.getElementById('vehicle').classList.add('in-zone');
             updateLocationStatus('En Zona Segura');
             updateProgress(2);
+            createVehicleTrail();
             await sleep(2000);
             setStepStatus(2, 'success');
+            showNotification('Zona', 'Vehículo detectado en zona de verificación', 'warning');
 
             // Paso 3: Iniciar llamada
             setStepStatus(3, 'active');
@@ -487,6 +1080,7 @@
             updateProgress(3);
             await sleep(1000);
             setStepStatus(3, 'success');
+            showNotification('Llamada', 'Conectando con conductor...', 'info');
 
             // Paso 4: Simulación de llamada
             setStepStatus(4, 'active');
@@ -497,12 +1091,14 @@
             await sleep(3000);
             setStepStatus(4, 'success');
             document.getElementById('callSimulation').style.display = 'none';
+            showNotification('Código', `Código ${code} intercambiado correctamente`, 'success');
 
             // Paso 5: Procesamiento IA
             setStepStatus(5, 'active');
             updateProgress(5);
             await sleep(2000);
             setStepStatus(5, 'success');
+            showNotification('IA', 'Voz analizada y validada por IA', 'success');
 
             // Paso 6: Verificación final
             setStepStatus(6, 'active');
@@ -512,9 +1108,9 @@
             
             updateVehicleStatus('Verificado ✅');
             document.getElementById('lastVerification').textContent = new Date().toLocaleTimeString();
-            
-            // Actualizar métricas
             document.getElementById('totalChecks').textContent = '1,248';
+            
+            showNotification('Completado', 'Verificación exitosa - Vehículo autorizado', 'success');
             
             isRunning = false;
         }
@@ -523,12 +1119,15 @@
             if (isRunning) return;
             isRunning = true;
             
+            showNotification('Sistema', 'Iniciando simulación de falla', 'warning');
+            
             resetAllSteps();
             document.getElementById('alertBox').style.display = 'none';
             
             // Simular hasta el fallo
             setStepStatus(1, 'active');
             updateProgress(1);
+            updateGPSCoords();
             await sleep(1000);
             setStepStatus(1, 'success');
 
@@ -536,6 +1135,7 @@
             document.getElementById('vehicle').classList.add('in-zone');
             updateLocationStatus('En Zona Segura');
             updateProgress(2);
+            createVehicleTrail();
             await sleep(1500);
             setStepStatus(2, 'success');
 
@@ -558,6 +1158,8 @@
             document.getElementById('securityLevel').textContent = 'CRÍTICO';
             document.getElementById('alertsCount').textContent = '4';
             
+            showNotification('ALERTA', 'Falla en verificación - Activando protocolos de seguridad', 'error');
+            
             isRunning = false;
         }
 
@@ -574,6 +1176,8 @@
             updateLocationStatus('Fuera de Zona');
             document.getElementById('lastVerification').textContent = 'Pendiente';
             document.getElementById('securityLevel').textContent = 'Alto';
+            
+            showNotification('Sistema', 'Simulación reiniciada', 'info');
         }
 
         function resetAllSteps() {
@@ -586,13 +1190,30 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // Animación de métricas en tiempo real
-        setInterval(() => {
-            if (!isRunning) {
-                const responseTime = (Math.random() * 2 + 1.5).toFixed(1);
-                document.getElementById('responseTime').textContent = responseTime + 's';
-            }
-        }, 3000);
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            createParticles();
+            showNotification('Sistema', 'Demo de Verificación de Transporte Iniciada', 'success');
+            
+            // Update GPS coords every 5 seconds
+            setInterval(updateGPSCoords, 5000);
+            
+            // Animate chart bars
+            setInterval(() => {
+                document.querySelectorAll('.chart-bar').forEach(bar => {
+                    const newHeight = Math.random() * 140 + 20;
+                    bar.style.height = newHeight + 'px';
+                });
+            }, 3000);
+            
+            // Update metrics in real time
+            setInterval(() => {
+                if (!isRunning) {
+                    const responseTime = (Math.random() * 2 + 1.5).toFixed(1);
+                    document.getElementById('responseTime').textContent = responseTime + 's';
+                }
+            }, 3000);
+        });
     </script>
 </body>
 </html>
