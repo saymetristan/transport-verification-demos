@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f8f9fa;
             min-height: 100vh;
             color: #333;
             overflow-x: hidden;
@@ -230,11 +230,121 @@
             font-weight: bold;
             background: radial-gradient(circle, rgba(243, 156, 18, 0.1) 0%, transparent 70%);
             animation: pulse-zone 3s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+
+        .zone.active {
+            border-color: #27ae60;
+            color: #27ae60;
+            background: radial-gradient(circle, rgba(39, 174, 96, 0.3) 0%, transparent 70%);
+            box-shadow: 0 0 30px rgba(39, 174, 96, 0.6);
+            animation: zone-match 1s ease-in-out infinite;
         }
 
         @keyframes pulse-zone {
             0%, 100% { transform: translateY(-50%) scale(1); }
             50% { transform: translateY(-50%) scale(1.05); }
+        }
+
+        @keyframes zone-match {
+            0%, 100% { 
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 0 30px rgba(39, 174, 96, 0.6);
+            }
+            50% { 
+                transform: translateY(-50%) scale(1.1);
+                box-shadow: 0 0 50px rgba(39, 174, 96, 0.9);
+            }
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, #27ae60, #2ecc71, #27ae60);
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            animation: line-pulse 1s ease-in-out infinite;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(39, 174, 96, 0.5);
+        }
+
+        @keyframes line-pulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .coord-match-indicator {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #27ae60;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .coord-match-indicator.show {
+            opacity: 1;
+            animation: bounce-in 0.5s ease;
+        }
+
+        @keyframes bounce-in {
+            0% { transform: translateX(-50%) scale(0); }
+            50% { transform: translateX(-50%) scale(1.2); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        .vehicle.in-zone {
+            right: 120px;
+            left: auto;
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            box-shadow: 0 0 30px rgba(39, 174, 96, 0.7);
+            animation: vehicle-match 1s ease-in-out infinite;
+        }
+
+        @keyframes vehicle-match {
+            0%, 100% { 
+                transform: translateY(-50%) scale(1);
+                box-shadow: 0 0 30px rgba(39, 174, 96, 0.7);
+            }
+            50% { 
+                transform: translateY(-50%) scale(1.15);
+                box-shadow: 0 0 50px rgba(39, 174, 96, 1);
+            }
+        }
+
+        .match-explosion {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(39, 174, 96, 0.8) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .match-explosion.animate {
+            animation: explosion 1s ease-out;
+        }
+
+        @keyframes explosion {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
         }
 
         .gps-coords {
@@ -345,6 +455,42 @@
             text-align: center;
             margin: 20px 0;
             display: none;
+            position: relative;
+            border: 2px solid #3498db;
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .call-simulation.active {
+            animation: call-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes call-pulse {
+            0%, 100% { 
+                border-color: #3498db;
+                box-shadow: 0 0 20px rgba(52, 152, 219, 0.3);
+            }
+            50% { 
+                border-color: #2ecc71;
+                box-shadow: 0 0 30px rgba(46, 204, 113, 0.6);
+            }
+        }
+
+        .audio-indicator {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #27ae60;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+            animation: audio-blink 1s infinite;
+        }
+
+        @keyframes audio-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
         }
 
         .phone-icon {
@@ -627,7 +773,7 @@
         .tab-buttons {
             display: flex;
             margin: 20px 0;
-            background: rgba(255, 255, 255, 0.1);
+            background: #e9ecef;
             border-radius: 10px;
             padding: 5px;
         }
@@ -636,7 +782,7 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: white;
+            color: #495057;
             padding: 12px;
             border-radius: 8px;
             cursor: pointer;
@@ -645,7 +791,7 @@
         }
 
         .tab-btn.active {
-            background: rgba(255, 255, 255, 0.2);
+            background: #007bff;
             color: white;
         }
     </style>
@@ -655,79 +801,101 @@
     
     <div class="notifications" id="notifications"></div>
     
+    <audio id="callAudioSuccess" preload="auto">
+        <source src="simulacion-exitosa.MP3" type="audio/mpeg">
+        Tu navegador no soporta el elemento audio.
+    </audio>
+    
+    <audio id="callAudioCodeFail" preload="auto">
+        <source src="falla-codigo.MP3" type="audio/mpeg">
+        Tu navegador no soporta el elemento audio.
+    </audio>
+    
+    <audio id="callAudioAIFail" preload="auto">
+        <source src="falla-ia.MP3" type="audio/mpeg">
+        Tu navegador no soporta el elemento audio.
+    </audio>
+    
     <div class="audio-controls">
-        <button class="audio-btn" onclick="toggleSound()" title="Toggle Sound">🔊</button>
-        <button class="audio-btn" onclick="toggleMusic()" title="Background Music">🎵</button>
+        <button class="audio-btn" onclick="toggleSound()" title="Toggle Sound">♪</button>
+        <button class="audio-btn" onclick="toggleMusic()" title="Background Music">♫</button>
     </div>
 
     <div class="header">
-        <h1>🚛 Sistema de Verificación de Transporte</h1>
+        <h1>▣ Sistema de Verificación de Transporte</h1>
         <p>Demostración Interactiva - Tecnología de Vanguardia</p>
+        
+        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 15px; font-size: 0.9em; color: #666;">
+            <span>◉ Algoritmos de Geolocalización Avanzada</span>
+            <span>◉ Sistema de IA para Análisis de Voz</span>
+            <span>◉ Protocolos de Verificación Biométrica</span>
+            <span>◉ Motor de Procesamiento en Tiempo Real</span>
+        </div>
     </div>
 
     <div class="main-container">
         <div class="flow-panel">
-            <h2>🔄 Flujo del Sistema</h2>
+            <h2>⟲ Flujo del Sistema</h2>
             
             <div class="progress-bar">
                 <div class="progress-fill" id="progressBar"></div>
             </div>
 
             <div class="flow-step waiting" id="step1">
-                <div class="step-icon">📍</div>
+                <div class="step-icon">◎</div>
                 <div class="step-content">
                     <h3>Obtener Ubicación</h3>
-                    <p>Rastreando vehículo mediante GPS/IoT</p>
+                    <p>Algoritmos de triangulación GPS y sensores IoT</p>
                 </div>
             </div>
 
             <div class="flow-step waiting" id="step2">
-                <div class="step-icon">🗺️</div>
+                <div class="step-icon">▦</div>
                 <div class="step-content">
                     <h3>Evaluar Coordenadas</h3>
-                    <p>Verificando si GPS coincide con zona geográfica designada</p>
+                    <p>Motor de geofencing para validación de zona geográfica</p>
                 </div>
             </div>
 
             <div class="flow-step waiting" id="step3">
-                <div class="step-icon">📞</div>
+                <div class="step-icon">☎</div>
                 <div class="step-content">
                     <h3>Llamada de Verificación</h3>
-                    <p>Iniciando llamada automática</p>
+                    <p>Sistema de comunicación VoIP automatizado</p>
                 </div>
             </div>
 
             <div class="flow-step waiting" id="step4">
-                <div class="step-icon">🎤</div>
+                <div class="step-icon">♫</div>
                 <div class="step-content">
                     <h3>Intercambio de Código</h3>
-                    <p>Sistema dice código, conductor responde</p>
+                    <p>Protocolo de autenticación por códigos de voz</p>
                 </div>
             </div>
 
             <div class="flow-step waiting" id="step5">
-                <div class="step-icon">🧠</div>
+                <div class="step-icon">⚡</div>
                 <div class="step-content">
                     <h3>Procesamiento IA</h3>
-                    <p>Análisis de voz y validación de código</p>
+                    <p>Algoritmos de reconocimiento y análisis biométrico</p>
                 </div>
             </div>
 
             <div class="flow-step waiting" id="step6">
-                <div class="step-icon">✅</div>
+                <div class="step-icon">✓</div>
                 <div class="step-content">
                     <h3>Verificación Final</h3>
-                    <p>Proceso completado exitosamente</p>
+                    <p>Sistema de autorización y logging de eventos</p>
                 </div>
             </div>
 
             <div class="alert" id="alertBox">
-                🚨 ALERTA: Verificación fallida - Activando protocolos de seguridad
+                ⚠ ALERTA: Verificación fallida - Activando protocolos de seguridad
             </div>
         </div>
 
         <div class="control-panel">
-            <h2>🎛️ Panel de Control</h2>
+            <h2>◈ Panel de Control</h2>
 
             <div class="map-container">
                 <div class="map-grid"></div>
@@ -738,20 +906,27 @@
                     <div>GPS SAT</div>
                     <div class="satellite-signal"></div>
                 </div>
-                <div class="vehicle" id="vehicle">🚛</div>
-                <div class="zone">ZONA<br>DESIGNADA</div>
+                <div class="vehicle" id="vehicle">
+                    ▣
+                    <div class="coord-match-indicator" id="matchIndicator">COORDS MATCH!</div>
+                </div>
+                <div class="zone" id="zone">
+                    ZONA<br>DESIGNADA
+                </div>
+                <div class="connection-line" id="connectionLine"></div>
+                <div class="match-explosion" id="matchExplosion"></div>
             </div>
 
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
-                <button class="tab-btn" onclick="showTab('config')">⚙️ Config</button>
-                <button class="tab-btn" onclick="showTab('history')">📋 Historial</button>
-                <button class="tab-btn" onclick="showTab('reports')">📈 Reportes</button>
+                <button class="tab-btn active" onclick="showTab('dashboard')">▲ Dashboard</button>
+                <button class="tab-btn" onclick="showTab('config')">⚙ Config</button>
+                <button class="tab-btn" onclick="showTab('history')">≡ Historial</button>
+                <button class="tab-btn" onclick="showTab('reports')">▣ Reportes</button>
             </div>
 
             <div id="dashboardTab">
                 <div class="chart-container">
-                    <div class="chart-title">📈 Verificaciones por Hora</div>
+                    <div class="chart-title">▲ Verificaciones por Hora</div>
                     <div class="chart-bar" style="left: 30px; height: 60px;"></div>
                     <div class="chart-bar" style="left: 60px; height: 80px;"></div>
                     <div class="chart-bar" style="left: 90px; height: 120px;"></div>
@@ -763,7 +938,7 @@
             </div>
 
             <div class="config-panel" id="configTab">
-                <h3>⚙️ Configuración del Sistema</h3>
+                <h3>⚙ Configuración del Sistema</h3>
                 <div class="config-item">
                     <span>Alertas de Sonido</span>
                     <div class="toggle-switch active" onclick="toggleConfig(this)"></div>
@@ -787,64 +962,65 @@
             </div>
 
             <div class="history-panel" id="historyTab">
-                <h3>📋 Historial de Verificaciones</h3>
+                <h3>≡ Historial de Verificaciones</h3>
                 <div class="history-item">
                     <div>
                         <strong>Vehículo TRA-001</strong><br>
                         <small>2024-01-15 14:30:22</small>
                     </div>
-                    <div class="history-status success">✅ VERIFICADO</div>
+                    <div class="history-status success">✓ VERIFICADO</div>
                 </div>
                 <div class="history-item">
                     <div>
                         <strong>Vehículo TRA-002</strong><br>
                         <small>2024-01-15 13:45:18</small>
                     </div>
-                    <div class="history-status success">✅ VERIFICADO</div>
+                    <div class="history-status success">✓ VERIFICADO</div>
                 </div>
                 <div class="history-item">
                     <div>
                         <strong>Vehículo TRA-003</strong><br>
                         <small>2024-01-15 12:22:10</small>
                     </div>
-                    <div class="history-status error">⚠️ FALLO</div>
+                    <div class="history-status error">✗ FALLO</div>
                 </div>
                 <div class="history-item">
                     <div>
                         <strong>Vehículo TRA-004</strong><br>
                         <small>2024-01-15 11:15:33</small>
                     </div>
-                    <div class="history-status success">✅ VERIFICADO</div>
+                    <div class="history-status success">✓ VERIFICADO</div>
                 </div>
             </div>
 
             <div class="export-panel" id="reportsTab" style="display: none;">
-                <h3>📈 Exportar Reportes</h3>
+                <h3>▣ Exportar Reportes</h3>
                 <p>Generar reportes profesionales para análisis ejecutivo</p>
-                <button class="export-btn" onclick="exportReport('pdf')">📄 PDF Ejecutivo</button>
-                <button class="export-btn" onclick="exportReport('excel')">📊 Excel Detallado</button>
-                <button class="export-btn" onclick="exportReport('csv')">📋 CSV Raw Data</button>
-                <button class="export-btn" onclick="exportReport('json')">🔧 JSON API</button>
+                <button class="export-btn" onclick="exportReport('pdf')">◊ PDF Ejecutivo</button>
+                <button class="export-btn" onclick="exportReport('excel')">◈ Excel Detallado</button>
+                <button class="export-btn" onclick="exportReport('csv')">≡ CSV Raw Data</button>
+                <button class="export-btn" onclick="exportReport('json')">{ } JSON API</button>
             </div>
 
             <div class="controls">
-                <button class="btn" onclick="startSimulation()">▶️ Simulación Exitosa</button>
-                <button class="btn danger" onclick="simulateFailure()">⚠️ Falla Aleatoria</button>
-                <button class="btn danger" onclick="simulateCodeFailure()">📞 Falla en Código</button>
-                <button class="btn danger" onclick="simulateAIFailure()">🧠 Falla en IA</button>
-                <button class="btn" onclick="resetSimulation()">🔄 Reiniciar</button>
+                <button class="btn" onclick="startSimulation()">► Simulación Exitosa</button>
+                <button class="btn danger" onclick="simulateFailure()">⚠ Falla Aleatoria</button>
+                <button class="btn danger" onclick="simulateCodeFailure()">☎ Falla en Código</button>
+                <button class="btn danger" onclick="simulateAIFailure()">⚡ Falla en IA</button>
+                <button class="btn" onclick="resetSimulation()">↻ Reiniciar</button>
             </div>
 
             <div class="call-simulation" id="callSimulation">
-                <div class="phone-icon">📞</div>
+                <div class="audio-indicator" id="audioIndicator">♪ AUDIO</div>
+                <div class="phone-icon">☎</div>
                 <h3>Llamada en Progreso</h3>
                 <div class="code-display" id="codeDisplay">----</div>
-                <p>Sistema: "Su código de verificación es..."</p>
+                <p id="callMessage">Sistema: "Su código de verificación es..."</p>
                 <p>Esperando respuesta del conductor...</p>
             </div>
 
             <div class="status-panel">
-                <h3>📊 Estado del Sistema</h3>
+                <h3>◈ Estado del Sistema</h3>
                 <div class="status-item">
                     <span>Estado Vehículo:</span>
                     <span class="status-value" id="vehicleStatus">En Ruta</span>
@@ -879,6 +1055,36 @@
                 <div class="metric-card">
                     <div class="metric-value" id="alertsCount">3</div>
                     <div class="metric-label">Alertas Hoy</div>
+                </div>
+            </div>
+
+            <div style="background: white; border-radius: 15px; padding: 20px; margin: 20px 0;">
+                <h3 style="margin-bottom: 15px; color: #2c3e50;">◉ Stack Tecnológico</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9em;">
+                    <div>
+                        <strong>▦ Geolocalización:</strong><br>
+                        <span style="color: #666;">• Algoritmos de triangulación satelital</span><br>
+                        <span style="color: #666;">• Motor de geofencing avanzado</span><br>
+                        <span style="color: #666;">• Corrección diferencial GPS</span>
+                    </div>
+                    <div>
+                        <strong>⚡ Inteligencia Artificial:</strong><br>
+                        <span style="color: #666;">• Redes neuronales para análisis de voz</span><br>
+                        <span style="color: #666;">• Algoritmos de reconocimiento biométrico</span><br>
+                        <span style="color: #666;">• Procesamiento de lenguaje natural</span>
+                    </div>
+                    <div>
+                        <strong>☎ Comunicaciones:</strong><br>
+                        <span style="color: #666;">• Protocolos VoIP seguros</span><br>
+                        <span style="color: #666;">• Sistemas de autenticación OTP</span><br>
+                        <span style="color: #666;">• Encriptación end-to-end</span>
+                    </div>
+                    <div>
+                        <strong>◈ Infraestructura:</strong><br>
+                        <span style="color: #666;">• Arquitectura de microservicios</span><br>
+                        <span style="color: #666;">• Bases de datos distribuidas</span><br>
+                        <span style="color: #666;">• Sistemas de monitoreo en tiempo real</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -950,6 +1156,17 @@
 
         function toggleSound() {
             soundEnabled = !soundEnabled;
+            
+            // Si se desactiva el sonido, detener cualquier audio que esté reproduciéndose
+            if (!soundEnabled) {
+                stopCallAudio();
+                // También limpiar countdown si está activo
+                if (window.audioCountdownInterval) {
+                    clearInterval(window.audioCountdownInterval);
+                    window.audioCountdownInterval = null;
+                }
+            }
+            
             showNotification('Audio', `Sonido ${soundEnabled ? 'activado' : 'desactivado'}`, 'info');
         }
 
@@ -1048,6 +1265,191 @@
             setTimeout(() => trail.remove(), 2000);
         }
 
+        function activateCoordinateMatch() {
+            const vehicle = document.getElementById('vehicle');
+            const zone = document.getElementById('zone');
+            const connectionLine = document.getElementById('connectionLine');
+            const matchIndicator = document.getElementById('matchIndicator');
+            const matchExplosion = document.getElementById('matchExplosion');
+            const gpsCoords = document.getElementById('gpsCoords');
+            
+            // Activar efectos visuales
+            zone.classList.add('active');
+            matchIndicator.classList.add('show');
+            
+            // Actualizar coordenadas GPS para mostrar coincidencia
+            gpsCoords.style.color = '#27ae60';
+            gpsCoords.style.fontWeight = 'bold';
+            gpsCoords.textContent = 'GPS: 19.4327° N, 99.1314° W [MATCH ZONE]';
+            
+            // Crear línea de conexión
+            const vehicleRect = vehicle.getBoundingClientRect();
+            const zoneRect = zone.getBoundingClientRect();
+            const mapRect = vehicle.parentElement.getBoundingClientRect();
+            
+            const vehicleCenter = vehicleRect.left + vehicleRect.width / 2 - mapRect.left;
+            const zoneCenter = zoneRect.left + zoneRect.width / 2 - mapRect.left;
+            
+            connectionLine.style.left = vehicleCenter + 'px';
+            connectionLine.style.width = (zoneCenter - vehicleCenter) + 'px';
+            connectionLine.style.display = 'block';
+            
+            // Efecto de explosión
+            matchExplosion.classList.add('animate');
+            setTimeout(() => {
+                matchExplosion.classList.remove('animate');
+            }, 1000);
+            
+            if (soundEnabled) {
+                playMatchSound();
+            }
+        }
+
+        function deactivateCoordinateMatch() {
+            const zone = document.getElementById('zone');
+            const connectionLine = document.getElementById('connectionLine');
+            const matchIndicator = document.getElementById('matchIndicator');
+            const gpsCoords = document.getElementById('gpsCoords');
+            
+            zone.classList.remove('active');
+            matchIndicator.classList.remove('show');
+            connectionLine.style.display = 'none';
+            
+            // Restaurar coordenadas GPS normales
+            gpsCoords.style.color = '#0ff';
+            gpsCoords.style.fontWeight = 'normal';
+            updateGPSCoords(); // Volver a coordenadas aleatorias
+        }
+
+        function playMatchSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Sonido de éxito más elaborado
+            const frequencies = [523, 659, 783]; // C5, E5, G5
+            
+            frequencies.forEach((freq, index) => {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(freq, audioContext.currentTime);
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }, index * 100);
+            });
+        }
+
+        function playCallAudio(simulationType = 'success') {
+            const callSimulation = document.getElementById('callSimulation');
+            const audioIndicator = document.getElementById('audioIndicator');
+            const callMessage = document.getElementById('callMessage');
+            
+            // Determinar qué audio usar según el tipo de simulación
+            let audioId, audioName;
+            switch(simulationType) {
+                case 'code_fail':
+                    audioId = 'callAudioCodeFail';
+                    audioName = 'Falla Código';
+                    break;
+                case 'ai_fail':
+                    audioId = 'callAudioAIFail';
+                    audioName = 'Falla IA';
+                    break;
+                case 'success':
+                default:
+                    audioId = 'callAudioSuccess';
+                    audioName = 'Éxito';
+                    break;
+            }
+            
+            // Activar efectos visuales
+            callSimulation.classList.add('active');
+            if (soundEnabled) {
+                audioIndicator.style.display = 'block';
+                startAudioCountdown(audioName);
+            } else {
+                audioIndicator.style.display = 'none';
+                callMessage.textContent = `Sistema: "Audio ${audioName}..." [AUDIO DESACTIVADO]`;
+            }
+            
+            if (!soundEnabled) return;
+            
+            const callAudio = document.getElementById(audioId);
+            callAudio.currentTime = 0; // Reiniciar desde el inicio
+            callAudio.volume = 0.7; // Volumen al 70%
+            
+            // Guardar referencia del audio actual para poder detenerlo
+            window.currentAudio = callAudio;
+            
+            callAudio.play().catch(error => {
+                console.log('Error al reproducir audio:', error);
+                showNotification('Audio', 'No se pudo reproducir el audio de llamada', 'warning');
+            });
+        }
+
+        function startAudioCountdown(audioName = 'Audio') {
+            const audioIndicator = document.getElementById('audioIndicator');
+            const callMessage = document.getElementById('callMessage');
+            let countdown = 14;
+            
+            const interval = setInterval(() => {
+                if (countdown > 0) {
+                    audioIndicator.textContent = `♪ ${audioName} ${countdown}s`;
+                    callMessage.textContent = `Sistema: "Audio ${audioName}..." [${countdown}s restantes]`;
+                    countdown--;
+                } else {
+                    clearInterval(interval);
+                    audioIndicator.textContent = `♪ ${audioName}`;
+                    callMessage.textContent = `Sistema: "Audio ${audioName}..." [Finalizado]`;
+                }
+            }, 1000);
+            
+            // Guardar el interval para poder limpiarlo si es necesario
+            window.audioCountdownInterval = interval;
+        }
+
+        function stopCallAudio() {
+            const callSimulation = document.getElementById('callSimulation');
+            const audioIndicator = document.getElementById('audioIndicator');
+            const callMessage = document.getElementById('callMessage');
+            
+            // Limpiar countdown si existe
+            if (window.audioCountdownInterval) {
+                clearInterval(window.audioCountdownInterval);
+                window.audioCountdownInterval = null;
+            }
+            
+            // Desactivar efectos visuales
+            callSimulation.classList.remove('active');
+            audioIndicator.style.display = 'none';
+            audioIndicator.textContent = '♪ AUDIO';
+            callMessage.textContent = 'Sistema: "Su código de verificación es..."';
+            
+            // Detener cualquier audio que esté reproduciéndose
+            if (window.currentAudio && !window.currentAudio.paused) {
+                window.currentAudio.pause();
+                window.currentAudio.currentTime = 0;
+            }
+            
+            // También detener todos los audios por si acaso
+            const allAudios = ['callAudioSuccess', 'callAudioCodeFail', 'callAudioAIFail'];
+            allAudios.forEach(audioId => {
+                const audio = document.getElementById(audioId);
+                if (audio && !audio.paused) {
+                    audio.pause();
+                    audio.currentTime = 0;
+                }
+            });
+            
+            window.currentAudio = null;
+        }
+
         async function startSimulation() {
             if (isRunning) return;
             isRunning = true;
@@ -1068,11 +1470,16 @@
 
             // Paso 2: Evaluar coordenadas GPS
             setStepStatus(2, 'active');
-            document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
+            await sleep(1000);
+            
+            // Activar efectos visuales de match
+            document.getElementById('vehicle').classList.add('in-zone');
+            activateCoordinateMatch();
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             createVehicleTrail();
-            await sleep(2000);
+            
+            await sleep(1000);
             setStepStatus(2, 'success');
             showNotification('GPS', 'Coordenadas GPS coinciden con zona geográfica designada', 'warning');
 
@@ -1087,11 +1494,13 @@
             // Paso 4: Simulación de llamada
             setStepStatus(4, 'active');
             document.getElementById('callSimulation').style.display = 'block';
+            playCallAudio('success'); // Reproducir audio de simulación exitosa
             const code = generateRandomCode();
             document.getElementById('codeDisplay').textContent = code;
             updateProgress(4);
-            await sleep(3000);
+            await sleep(14500); // Esperar 14.5 segundos para el audio completo
             setStepStatus(4, 'success');
+            stopCallAudio(); // Detener audio de llamada
             document.getElementById('callSimulation').style.display = 'none';
             showNotification('Código', `Código ${code} intercambiado correctamente`, 'success');
 
@@ -1138,11 +1547,16 @@
             setStepStatus(1, 'success');
 
             setStepStatus(2, 'active');
-            document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
+            await sleep(1000);
+            
+            // Activar efectos visuales de match
+            document.getElementById('vehicle').classList.add('in-zone');
+            activateCoordinateMatch();
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             createVehicleTrail();
-            await sleep(1500);
+            
+            await sleep(500);
             setStepStatus(2, 'success');
             showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
 
@@ -1155,10 +1569,12 @@
                 // Falla en intercambio de código
                 setStepStatus(4, 'active');
                 document.getElementById('callSimulation').style.display = 'block';
+                playCallAudio('code_fail'); // Reproducir audio de falla en código
                 document.getElementById('codeDisplay').textContent = '####';
                 updateProgress(4);
-                await sleep(2000);
+                await sleep(14500); // Esperar audio completo antes de fallar
                 setStepStatus(4, 'error');
+                stopCallAudio(); // Detener audio de llamada
                 document.getElementById('callSimulation').style.display = 'none';
                 
                 showNotification('FALLA', 'Error en intercambio de código - Conductor no respondió correctamente', 'error');
@@ -1167,11 +1583,13 @@
                 // Falla en procesamiento de IA
                 setStepStatus(4, 'active');
                 document.getElementById('callSimulation').style.display = 'block';
+                playCallAudio('ai_fail'); // Reproducir audio de falla en IA
                 const code = generateRandomCode();
                 document.getElementById('codeDisplay').textContent = code;
                 updateProgress(4);
-                await sleep(2500);
+                await sleep(14500); // Esperar audio completo
                 setStepStatus(4, 'success');
+                stopCallAudio(); // Detener audio de llamada
                 document.getElementById('callSimulation').style.display = 'none';
                 showNotification('Código', `Código ${code} intercambiado`, 'success');
 
@@ -1212,11 +1630,16 @@
             setStepStatus(1, 'success');
 
             setStepStatus(2, 'active');
-            document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
+            await sleep(1000);
+            
+            // Activar efectos visuales de match
+            document.getElementById('vehicle').classList.add('in-zone');
+            activateCoordinateMatch();
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             createVehicleTrail();
-            await sleep(1500);
+            
+            await sleep(500);
             setStepStatus(2, 'success');
             showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
 
@@ -1228,10 +1651,12 @@
             // Falla específica en intercambio de código
             setStepStatus(4, 'active');
             document.getElementById('callSimulation').style.display = 'block';
+            playCallAudio('code_fail'); // Reproducir audio específico de falla en código
             document.getElementById('codeDisplay').textContent = '####';
             updateProgress(4);
-            await sleep(2000);
+            await sleep(14500); // Esperar audio completo antes de fallar
             setStepStatus(4, 'error');
+            stopCallAudio(); // Detener audio de llamada
             document.getElementById('callSimulation').style.display = 'none';
             
             showNotification('FALLA CÓDIGO', 'Conductor no respondió o código incorrecto', 'error');
@@ -1264,11 +1689,16 @@
             setStepStatus(1, 'success');
 
             setStepStatus(2, 'active');
-            document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
+            await sleep(1000);
+            
+            // Activar efectos visuales de match
+            document.getElementById('vehicle').classList.add('in-zone');
+            activateCoordinateMatch();
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             createVehicleTrail();
-            await sleep(1500);
+            
+            await sleep(500);
             setStepStatus(2, 'success');
             showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
 
@@ -1277,14 +1707,16 @@
             await sleep(1000);
             setStepStatus(3, 'success');
 
-            // Intercambio exitoso de código
+            // Intercambio exitoso de código (pero fallará en IA)
             setStepStatus(4, 'active');
             document.getElementById('callSimulation').style.display = 'block';
+            playCallAudio('ai_fail'); // Reproducir audio específico de falla en IA
             const code = generateRandomCode();
             document.getElementById('codeDisplay').textContent = code;
             updateProgress(4);
-            await sleep(2500);
+            await sleep(14500); // Esperar audio completo
             setStepStatus(4, 'success');
+            stopCallAudio(); // Detener audio de llamada
             document.getElementById('callSimulation').style.display = 'none';
             showNotification('Código', `Código ${code} intercambiado exitosamente`, 'success');
 
@@ -1315,6 +1747,12 @@
             document.getElementById('callSimulation').style.display = 'none';
             document.getElementById('alertBox').style.display = 'none';
             updateProgress(0);
+            
+            // Desactivar efectos visuales de match
+            deactivateCoordinateMatch();
+            
+            // Detener audio de llamada si está reproduciéndose
+            stopCallAudio();
             
             updateVehicleStatus('En Ruta');
             updateLocationStatus('Coordenadas Fuera de Zona');
