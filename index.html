@@ -684,8 +684,8 @@
             <div class="flow-step waiting" id="step2">
                 <div class="step-icon">🗺️</div>
                 <div class="step-content">
-                    <h3>Evaluar Zona</h3>
-                    <p>Verificando si está en zona predefinida</p>
+                    <h3>Evaluar Coordenadas</h3>
+                    <p>Verificando si GPS coincide con zona geográfica designada</p>
                 </div>
             </div>
 
@@ -739,7 +739,7 @@
                     <div class="satellite-signal"></div>
                 </div>
                 <div class="vehicle" id="vehicle">🚛</div>
-                <div class="zone">ZONA<br>SEGURA</div>
+                <div class="zone">ZONA<br>DESIGNADA</div>
             </div>
 
             <div class="tab-buttons">
@@ -828,8 +828,10 @@
             </div>
 
             <div class="controls">
-                <button class="btn" onclick="startSimulation()">▶️ Iniciar Simulación</button>
-                <button class="btn danger" onclick="simulateFailure()">⚠️ Simular Falla</button>
+                <button class="btn" onclick="startSimulation()">▶️ Simulación Exitosa</button>
+                <button class="btn danger" onclick="simulateFailure()">⚠️ Falla Aleatoria</button>
+                <button class="btn danger" onclick="simulateCodeFailure()">📞 Falla en Código</button>
+                <button class="btn danger" onclick="simulateAIFailure()">🧠 Falla en IA</button>
                 <button class="btn" onclick="resetSimulation()">🔄 Reiniciar</button>
             </div>
 
@@ -848,7 +850,7 @@
                     <span class="status-value" id="vehicleStatus">En Ruta</span>
                 </div>
                 <div class="status-item">
-                    <span>Ubicación:</span>
+                    <span>Coordenadas GPS:</span>
                     <span class="status-value" id="locationStatus">Fuera de Zona</span>
                 </div>
                 <div class="status-item">
@@ -1064,15 +1066,15 @@
             setStepStatus(1, 'success');
             showNotification('GPS', 'Ubicación obtenida exitosamente', 'success');
 
-            // Paso 2: Mover vehículo y evaluar zona
+            // Paso 2: Evaluar coordenadas GPS
             setStepStatus(2, 'active');
             document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('En Zona Segura');
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
             createVehicleTrail();
             await sleep(2000);
             setStepStatus(2, 'success');
-            showNotification('Zona', 'Vehículo detectado en zona de verificación', 'warning');
+            showNotification('GPS', 'Coordenadas GPS coinciden con zona geográfica designada', 'warning');
 
             // Paso 3: Iniciar llamada
             setStepStatus(3, 'active');
@@ -1124,7 +1126,11 @@
             resetAllSteps();
             document.getElementById('alertBox').style.display = 'none';
             
-            // Simular hasta el fallo
+            // Determinar tipo de falla aleatoriamente
+            const failureTypes = ['code_exchange', 'ai_processing'];
+            const failureType = failureTypes[Math.floor(Math.random() * failureTypes.length)];
+            
+            // Simular pasos exitosos hasta el punto de falla
             setStepStatus(1, 'active');
             updateProgress(1);
             updateGPSCoords();
@@ -1133,24 +1139,50 @@
 
             setStepStatus(2, 'active');
             document.getElementById('vehicle').classList.add('in-zone');
-            updateLocationStatus('En Zona Segura');
+            updateLocationStatus('Coordenadas Coinciden con Zona');
             updateProgress(2);
             createVehicleTrail();
             await sleep(1500);
             setStepStatus(2, 'success');
+            showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
 
             setStepStatus(3, 'active');
             updateProgress(3);
             await sleep(1000);
             setStepStatus(3, 'success');
 
-            setStepStatus(4, 'active');
-            document.getElementById('callSimulation').style.display = 'block';
-            document.getElementById('codeDisplay').textContent = '####';
-            updateProgress(4);
-            await sleep(2000);
-            setStepStatus(4, 'error');
-            document.getElementById('callSimulation').style.display = 'none';
+            if (failureType === 'code_exchange') {
+                // Falla en intercambio de código
+                setStepStatus(4, 'active');
+                document.getElementById('callSimulation').style.display = 'block';
+                document.getElementById('codeDisplay').textContent = '####';
+                updateProgress(4);
+                await sleep(2000);
+                setStepStatus(4, 'error');
+                document.getElementById('callSimulation').style.display = 'none';
+                
+                showNotification('FALLA', 'Error en intercambio de código - Conductor no respondió correctamente', 'error');
+                
+            } else {
+                // Falla en procesamiento de IA
+                setStepStatus(4, 'active');
+                document.getElementById('callSimulation').style.display = 'block';
+                const code = generateRandomCode();
+                document.getElementById('codeDisplay').textContent = code;
+                updateProgress(4);
+                await sleep(2500);
+                setStepStatus(4, 'success');
+                document.getElementById('callSimulation').style.display = 'none';
+                showNotification('Código', `Código ${code} intercambiado`, 'success');
+
+                // Falla en el procesamiento de IA
+                setStepStatus(5, 'active');
+                updateProgress(5);
+                await sleep(2000);
+                setStepStatus(5, 'error');
+                
+                showNotification('FALLA IA', 'Error en procesamiento de voz - Análisis de IA no validó la respuesta', 'error');
+            }
 
             // Mostrar alerta
             document.getElementById('alertBox').style.display = 'block';
@@ -1158,7 +1190,119 @@
             document.getElementById('securityLevel').textContent = 'CRÍTICO';
             document.getElementById('alertsCount').textContent = '4';
             
-            showNotification('ALERTA', 'Falla en verificación - Activando protocolos de seguridad', 'error');
+            showNotification('ALERTA', 'Verificación fallida - Activando protocolos de seguridad', 'error');
+            
+            isRunning = false;
+        }
+
+        async function simulateCodeFailure() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            showNotification('Sistema', 'Simulando falla específica en intercambio de código', 'warning');
+            
+            resetAllSteps();
+            document.getElementById('alertBox').style.display = 'none';
+            
+            // Simular pasos exitosos hasta falla en código
+            setStepStatus(1, 'active');
+            updateProgress(1);
+            updateGPSCoords();
+            await sleep(1000);
+            setStepStatus(1, 'success');
+
+            setStepStatus(2, 'active');
+            document.getElementById('vehicle').classList.add('in-zone');
+            updateLocationStatus('Coordenadas Coinciden con Zona');
+            updateProgress(2);
+            createVehicleTrail();
+            await sleep(1500);
+            setStepStatus(2, 'success');
+            showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
+
+            setStepStatus(3, 'active');
+            updateProgress(3);
+            await sleep(1000);
+            setStepStatus(3, 'success');
+
+            // Falla específica en intercambio de código
+            setStepStatus(4, 'active');
+            document.getElementById('callSimulation').style.display = 'block';
+            document.getElementById('codeDisplay').textContent = '####';
+            updateProgress(4);
+            await sleep(2000);
+            setStepStatus(4, 'error');
+            document.getElementById('callSimulation').style.display = 'none';
+            
+            showNotification('FALLA CÓDIGO', 'Conductor no respondió o código incorrecto', 'error');
+
+            // Mostrar alerta
+            document.getElementById('alertBox').style.display = 'block';
+            updateVehicleStatus('FALLA DE VERIFICACIÓN ⚠️');
+            document.getElementById('securityLevel').textContent = 'CRÍTICO';
+            document.getElementById('alertsCount').textContent = '4';
+            
+            showNotification('ALERTA', 'Falla en intercambio de código - Activando protocolos', 'error');
+            
+            isRunning = false;
+        }
+
+        async function simulateAIFailure() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            showNotification('Sistema', 'Simulando falla específica en procesamiento de IA', 'warning');
+            
+            resetAllSteps();
+            document.getElementById('alertBox').style.display = 'none';
+            
+            // Simular pasos exitosos hasta falla en IA
+            setStepStatus(1, 'active');
+            updateProgress(1);
+            updateGPSCoords();
+            await sleep(1000);
+            setStepStatus(1, 'success');
+
+            setStepStatus(2, 'active');
+            document.getElementById('vehicle').classList.add('in-zone');
+            updateLocationStatus('Coordenadas Coinciden con Zona');
+            updateProgress(2);
+            createVehicleTrail();
+            await sleep(1500);
+            setStepStatus(2, 'success');
+            showNotification('GPS', 'Coordenadas GPS coinciden - Iniciando llamada automática', 'warning');
+
+            setStepStatus(3, 'active');
+            updateProgress(3);
+            await sleep(1000);
+            setStepStatus(3, 'success');
+
+            // Intercambio exitoso de código
+            setStepStatus(4, 'active');
+            document.getElementById('callSimulation').style.display = 'block';
+            const code = generateRandomCode();
+            document.getElementById('codeDisplay').textContent = code;
+            updateProgress(4);
+            await sleep(2500);
+            setStepStatus(4, 'success');
+            document.getElementById('callSimulation').style.display = 'none';
+            showNotification('Código', `Código ${code} intercambiado exitosamente`, 'success');
+
+            // Falla específica en procesamiento de IA
+            setStepStatus(5, 'active');
+            updateProgress(5);
+            await sleep(2000);
+            setStepStatus(5, 'error');
+            
+            showNotification('FALLA IA', 'IA detectó voz sospechosa o no autorizada', 'error');
+
+            // Mostrar alerta
+            document.getElementById('alertBox').style.display = 'block';
+            updateVehicleStatus('FALLA DE VERIFICACIÓN ⚠️');
+            document.getElementById('securityLevel').textContent = 'CRÍTICO';
+            document.getElementById('alertsCount').textContent = '4';
+            
+            showNotification('ALERTA', 'Falla en análisis de IA - Activando protocolos', 'error');
             
             isRunning = false;
         }
@@ -1173,7 +1317,7 @@
             updateProgress(0);
             
             updateVehicleStatus('En Ruta');
-            updateLocationStatus('Fuera de Zona');
+            updateLocationStatus('Coordenadas Fuera de Zona');
             document.getElementById('lastVerification').textContent = 'Pendiente';
             document.getElementById('securityLevel').textContent = 'Alto';
             
