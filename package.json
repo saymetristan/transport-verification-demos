@@ -1,0 +1,15 @@
+{
+  "name": "transport-verification-demo",
+  "version": "1.0.0",
+  "description": "Interactive demo for transport verification system",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s . -p $PORT"
+  },
+  "keywords": ["transport", "verification", "demo", "iot", "security"],
+  "author": "Jorge Tristan",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}
